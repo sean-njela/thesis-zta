@@ -1,4 +1,5 @@
 # 🧱 Quarkus + Istio Zero Trust Demo (FULL Setup Guide)
+[![Built with Devbox](https://www.jetify.com/img/devbox/shield_moon.svg)](https://www.jetify.com/devbox/docs/contributor-quickstart/)
 
 > ✅ Build a microservices architecture using Zero Trust principles
 > 💡 Based on [https://github.com/jonathanvila/quarkus-simple-rest](https://github.com/jonathanvila/quarkus-simple-rest)
