@@ -8,8 +8,8 @@
 
 Make sure the following are installed on your host system:
 
-* [Docker](https://www.docker.com/products/docker-desktop/)
-* [Devbox](https://www.jetpack.io/devbox/docs/install/)
+* [Docker](https://docs.docker.com/engine/install/)
+* [Devbox](https://jetify-com.vercel.app/docs/devbox/installing_devbox)
 * [Git](https://git-scm.com/downloads)
 
 
