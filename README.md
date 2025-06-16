@@ -41,7 +41,7 @@ cd quarkus-simple-rest
     "maven",
     "openjdk17",
     "jq",
-    "task",
+    "go-task",
     "xdg-utils"
   ]
 }
