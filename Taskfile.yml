@@ -1,0 +1,91 @@
+version: '3'
+
+tasks:
+  setup:cluster:
+    cmds:
+      - kind create cluster --name zta-demo --image kindest/node:v1.26.3
+      - istioctl install --set profile=demo -y
+      - kubectl label namespace default istio-injection=enabled --overwrite
+
+  build:services:
+    cmds:
+      - ./mvnw clean package -Dquarkus.kubernetes.deploy=false
+
+  deploy:services:
+    deps: [build:services]
+    cmds:
+      - kubectl apply -f target/kubernetes/kubernetes.yml
+
+  apply:istio-config:
+    cmds:
+      - kubectl apply -f src/main/k8s/gateway.yml
+      - kubectl apply -f src/main/k8s/virtualsvc.yml
+      - kubectl apply -f src/main/k8s/authn.yml
+      - kubectl apply -f src/main/k8s/authz.yml
+
+  apply:observability:
+    cmds:
+      - kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.19/samples/addons/prometheus.yaml
+      - kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.19/samples/addons/jaeger.yaml
+      - kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.19/samples/addons/grafana.yaml
+      - kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.19/samples/addons/kiali.yaml
+
+  wait:kiali:
+    cmds:
+      - until kubectl get pods -n istio-system | grep kiali | grep Running; do echo "⏳ Waiting for Kiali..."; sleep 5; done
+
+  wait:grafana:
+    cmds:
+      - until kubectl get pods -n istio-system | grep grafana | grep Running; do echo "⏳ Waiting for Grafana..."; sleep 5; done
+
+  wait:jaeger:
+    cmds:
+      - until kubectl get pods -n istio-system | grep jaeger | grep Running; do echo "⏳ Waiting for Jaeger..."; sleep 5; done
+
+  wait:all-observability:
+    cmds:
+      - task wait:kiali
+      - task wait:grafana
+      - task wait:jaeger
+
+  port:kiali:
+    deps: [wait:kiali]
+    cmds:
+      - kubectl port-forward svc/kiali 20001:20001 -n istio-system
+
+  port:grafana:
+    deps: [wait:grafana]
+    cmds:
+      - kubectl port-forward svc/grafana 3000:3000 -n istio-system
+
+  port:jaeger:
+    deps: [wait:jaeger]
+    cmds:
+      - kubectl port-forward svc/jaeger-query 16686:16686 -n istio-system
+
+  open:dashboards:
+    deps: [wait:all-observability]
+    cmds:
+      - echo "🔌 Port forwarding for dashboards..."
+      - kubectl port-forward svc/kiali 20001:20001 -n istio-system & disown
+      - kubectl port-forward svc/grafana 3000:3000 -n istio-system & disown
+      - kubectl port-forward svc/jaeger-query 16686:16686 -n istio-system & disown
+      - sleep 3
+      - |
+        BROWSER_CMD="${BROWSER:-$(command -v firefox || command -v google-chrome || command -v chromium || command -v brave || echo '')}"
+        if [ -z "$BROWSER_CMD" ]; then
+          echo "⚠️ No supported browser found. Please open manually:"
+          echo "  http://localhost:20001 (Kiali)"
+          echo "  http://localhost:3000 (Grafana)"
+          echo "  http://localhost:16686 (Jaeger)"
+        else
+          echo "🌐 Opening dashboards in $BROWSER_CMD..."
+          $BROWSER_CMD http://localhost:20001 &
+          $BROWSER_CMD http://localhost:3000 &
+          $BROWSER_CMD http://localhost:16686 &
+        fi
+
+  clean:
+    cmds:
+      - kind delete cluster
+      - docker-compose down

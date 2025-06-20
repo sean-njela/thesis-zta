@@ -1,4 +1,3 @@
-
 # 🧱 Quarkus + Istio Zero Trust Demo (FULL Setup Guide)
 
 [![Built with Devbox](https://www.jetify.com/img/devbox/shield_moon.svg)](https://www.jetify.com/devbox/docs/contributor-quickstart/)
@@ -12,9 +11,9 @@
 
 Make sure the following are installed:
 
-* [Docker](https://docs.docker.com/engine/install/)
-* [Devbox](https://jetify-com.vercel.app/docs/devbox/installing_devbox)
-* [Git](https://git-scm.com/downloads)
+- [Docker](https://docs.docker.com/engine/install/)
+- [Devbox](https://jetify-com.vercel.app/docs/devbox/installing_devbox)
+- [Git](https://git-scm.com/downloads)
 
 ---
 
@@ -42,7 +41,8 @@ cd quarkus-simple-rest
     "openjdk17",
     "jq",
     "go-task",
-    "xdg-utils"
+    "xdg-utils",
+    "git"
   ]
 }
 ```
@@ -60,7 +60,7 @@ devbox shell
 ### 3.1 Create `docker-compose.yaml`
 
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.5
@@ -87,8 +87,9 @@ docker-compose up -d
 ## 🛠 Step 4: Taskfile Automation
 
 ### 4.1 Create Taskfile.yml
+
 ```yaml
-version: '3'
+version: "3"
 
 tasks:
   setup:cluster:
@@ -180,7 +181,9 @@ tasks:
       - kind delete cluster
       - docker-compose down
 ```
+
 > You can extend the Taskfile by adding test: or status: tasks for health checks or CI/CD integration.
+
 ### 4.1 Core Commands
 
 ```bash
@@ -236,9 +239,9 @@ task open:dashboards
 
 This:
 
-* Waits for Kiali, Grafana, Jaeger pods to be ready
-* Port-forwards each dashboard
-* Launches your default browser (with BROWSER override support)
+- Waits for Kiali, Grafana, Jaeger pods to be ready
+- Port-forwards each dashboard
+- Launches your default browser (with BROWSER override support)
 
 💡 If no browser is found, the task prints manual URLs.
 
@@ -281,12 +284,11 @@ quarkus-simple-rest/
 
 ---
 
-
 ## ✅ Best Practices Included
 
-* 🧪 Manual `kubectl` deploy avoids Fabric8 incompatibilities
-* 🛠 Portability via Devbox and Taskfile automation
-* 🔐 Zero Trust enforced with Istio (AuthN/AuthZ + mTLS)
-* 📈 Visual insight using Kiali, Jaeger, Grafana
-* 💡 Safe browser logic (`BROWSER`, fallback, or manual links)
-* 🔁 CI-friendly and developer-friendly repeatability
+- 🧪 Manual `kubectl` deploy avoids Fabric8 incompatibilities
+- 🛠 Portability via Devbox and Taskfile automation
+- 🔐 Zero Trust enforced with Istio (AuthN/AuthZ + mTLS)
+- 📈 Visual insight using Kiali, Jaeger, Grafana
+- 💡 Safe browser logic (`BROWSER`, fallback, or manual links)
+- 🔁 CI-friendly and developer-friendly repeatability

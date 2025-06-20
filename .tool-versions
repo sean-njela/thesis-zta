@@ -1,0 +1,4 @@
+java temurin-17
+node 20
+python 3.11
+go 1.21

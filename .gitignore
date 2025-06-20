@@ -404,3 +404,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+devbox.lock
+node_modules/
+**pycache**/
+*.pyc

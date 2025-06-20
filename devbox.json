@@ -1,0 +1,19 @@
+{
+  "packages": [
+    "docker",
+    "kubectl",
+    "kind",
+    "istioctl",
+    "maven",
+    "openjdk17",
+    "jq",
+    "go-task",
+    "xdg-utils",
+    "git",
+    "mise"
+  ],
+  "shell": {
+    "init_hook": "",
+    "scripts": {}
+  }
+}

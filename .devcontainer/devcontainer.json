@@ -1,0 +1,8 @@
+{
+  "name": "Cloud Devbox + mise",
+  "image": "ghcr.io/sean-njela/dev-env:latest",
+  "postCreateCommand": "devbox install && mise install",
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "bash"
+  }
+}
