@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.quarkus.io/commit-id: c49a2b4e11a9618aee916734399748ae0a381d10
+    app.quarkus.io/build-timestamp: 2025-06-25 - 14:00:11 +0000
+  labels:
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/name: quarkus-zta
+  name: quarkus-zta
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+      app.kubernetes.io/name: quarkus-zta
+  template:
+    metadata:
+      annotations:
+        app.quarkus.io/commit-id: c49a2b4e11a9618aee916734399748ae0a381d10
+        app.quarkus.io/build-timestamp: 2025-06-25 - 14:00:11 +0000
+      labels:
+        app.kubernetes.io/version: 1.0.0-SNAPSHOT
+        app.kubernetes.io/name: quarkus-zta
+    spec:
+      containers:
+        - env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          image: tsn/quarkus-zta:1.0.0-SNAPSHOT
+          imagePullPolicy: IfNotPresent
+          name: quarkus-zta
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    app.quarkus.io/commit-id: c49a2b4e11a9618aee916734399748ae0a381d10
+    app.quarkus.io/build-timestamp: 2025-06-25 - 14:00:11 +0000
+  labels:
+    app.kubernetes.io/name: quarkus-zta
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  name: quarkus-zta
+spec:
+  ports:
+    - name: http
+      nodePort: 31591
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: quarkus-zta
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  type: NodePort

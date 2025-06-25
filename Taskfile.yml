@@ -3,7 +3,7 @@ version: '3'
 tasks:
   setup:cluster:
     cmds:
-      - kind create cluster --name zta-demo --image kindest/node:v1.26.3
+      - kind create cluster --name zta-demo --image kindest/node:v1.29.2
       - istioctl install --set profile=demo -y
       - kubectl label namespace default istio-injection=enabled --overwrite
 
@@ -67,24 +67,18 @@ tasks:
     deps: [wait:all-observability]
     cmds:
       - echo "🔌 Port forwarding for dashboards..."
-      - kubectl port-forward svc/kiali 20001:20001 -n istio-system & disown
-      - kubectl port-forward svc/grafana 3000:3000 -n istio-system & disown
-      - kubectl port-forward svc/jaeger-query 16686:16686 -n istio-system & disown
+      - sh -c 'kubectl port-forward svc/kiali 20001:20001 -n istio-system > /dev/null 2>&1 &'
+      - sh -c 'kubectl port-forward svc/grafana 3000:3000 -n istio-system > /dev/null 2>&1 &'
+      - sh -c 'kubectl port-forward svc/jaeger-query 16686:16686 -n istio-system > /dev/null 2>&1 &'
       - sleep 3
       - |
         BROWSER_CMD="${BROWSER:-$(command -v firefox || command -v google-chrome || command -v chromium || command -v brave || echo '')}"
-        if [ -z "$BROWSER_CMD" ]; then
-          echo "⚠️ No supported browser found. Please open manually:"
-          echo "  http://localhost:20001 (Kiali)"
-          echo "  http://localhost:3000 (Grafana)"
-          echo "  http://localhost:16686 (Jaeger)"
-        else
-          echo "🌐 Opening dashboards in $BROWSER_CMD..."
-          $BROWSER_CMD http://localhost:20001 &
-          $BROWSER_CMD http://localhost:3000 &
-          $BROWSER_CMD http://localhost:16686 &
-        fi
-
+        echo "⚠️ Please open dashboards manually:"
+        echo " $BROWSER_CMD http://localhost:20001 (Kiali)"
+        echo " $BROWSER_CMD http://localhost:3000 (Grafana)"
+        echo " $BROWSER_CMD http://localhost:16686 (Jaeger)"
+        echo "Or run the following command in a seperate terminal:"
+        echo "nohup \"$BROWSER_CMD\" http://localhost:20001 http://localhost:3000 http://localhost:16686 > /dev/null 2>&1 &"
   clean:
     cmds:
       - kind delete cluster
