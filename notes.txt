@@ -1,0 +1,4 @@
+kind version is key for the quarkus version we are using 
+
+we dont need keycloak
+

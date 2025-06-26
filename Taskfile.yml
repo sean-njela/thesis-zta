@@ -3,14 +3,14 @@ version: '3'
 tasks:
   setup:cluster:
     cmds:
-      - kind create cluster --name zta-demo --image kindest/node:v1.29.2
+      - kind create cluster --name zta-demo --image kindest/node:v1.26.6
       - istioctl install --set profile=demo -y
       - kubectl label namespace default istio-injection=enabled --overwrite
 
   build:services:
     cmds:
-      - ./mvnw clean package -Dquarkus.kubernetes.deploy=false
-
+      - ./mvnw install -Dquarkus.container-image.build=true -Dquarkus.kubernetes.deploy=true -Dquarkus.kubernetes.namespace=default -Dquarkus.kubernetes.labels.app=quarkus -Dquarkus.kubernetes.name=quarkus-zta
+      - ./mvnw install -Dquarkus.container-image.build=true -Dquarkus.kubernetes.deploy=true -Dquarkus.kubernetes.namespace=default -Dquarkus.kubernetes.labels.app=quarkus -Dquarkus.kubernetes.name=quarkus-zta-aux
   deploy:services:
     deps: [build:services]
     cmds:
